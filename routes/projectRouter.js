@@ -4,11 +4,11 @@ const actionDB = require('../data/helpers/actionModel');
 
 const router = express.Router();
 
-// router.post('/', validateUser, (req, res) => {
-//   userDB.insert(req.body)
-//     .then(user => res.status(201).json(user))
-//     .catch(() => res.status(500).json({ error: "There was an error while saving the user to the database" }))
-// });
+router.post('/', validateProject, (req, res) => {
+  projectDB.insert(req.body)
+    .then(project => res.status(201).json(project))
+    .catch(() => res.status(500).json({ error: "There was an error while saving the project to the database" }))
+});
 
 // router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
 //   postDB.insert(req.body)
@@ -40,23 +40,23 @@ router.get('/:id', validateProjectId, (req, res) => {
 //     .catch(() => res.status(500).json({ error: "The posts information could not be retrieved." }))
 // });
 
-// router.delete('/:id', validateUserId, (req, res) => {
-//   userDB.remove(req.user.id)
-//     .then(user => {
-//       if (user) res.status(202).json({ error: `The user with the ID ${req.user.id} has been removed.` })
-//       else res.status(404).json({ error: "The user with the specified ID does not exist." })
-//     })
-//     .catch(() => res.status(500).json({ error: "The user could not be removed" }))
-// });
+router.delete('/:id', validateProjectId, (req, res) => {
+  projectDB.remove(req.project.id)
+    .then(project => {
+      if (project) res.status(202).json({ error: `The project with the ID ${req.project.id} has been removed.` })
+      else res.status(404).json({ error: "The project with the specified ID does not exist." })
+    })
+    .catch(() => res.status(500).json({ error: "The project could not be removed" }))
+});
 
-// router.put('/:id', validateUserId, validateUser, (req, res) => {
-//   userDB.update(req.user.id, req.body)
-//     .then(user => {
-//       if (user) res.status(200).json({ error: `The user with the ID ${req.user.id} has been updated.` })
-//       else res.status(404).json({ error: "The user with the specified ID does not exist." })
-//     })
-//     .catch(() => res.status(500).json({ error: "The user information could not be modified." }))
-// });
+router.put('/:id', validateProjectId, validateProject, (req, res) => {
+  projectDB.update(req.project.id, req.body)
+    .then(project => {
+      if (project) res.status(200).json({ error: `The project with the ID ${req.project.id} has been updated.` })
+      else res.status(404).json({ error: "The project with the specified ID does not exist." })
+    })
+    .catch(() => res.status(500).json({ error: "The project information could not be modified." }))
+});
 
 // custom middleware
 
@@ -73,13 +73,13 @@ function validateProjectId(req, res, next) {
     .catch(() => res.status(500).json({ error: "The projects information could not be retrieved." }))
 };
 
-// function validateUser(req, res, next) {
-//   const { name } = req.body;
+function validateProject(req, res, next) {
+  const { name, description } = req.body;
 
-//   if (!req.body) res.status(400).json({ message: "missing user data" })
-//   else if (!name) res.status(400).json({ message: "missing required name field" })
-//   else next();
-// };
+  if (!req.body) res.status(400).json({ message: "missing project data" })
+  else if (!name || !description) res.status(400).json({ message: "missing required field: name, description, or completed" })
+  else next();
+};
 
 // function validatePost(req, res, next) {
 //   const { text } = req.body;
