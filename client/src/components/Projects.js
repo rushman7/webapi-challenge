@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dimmer, Loader, Button } from 'semantic-ui-react'
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
-const Projects = () => {
+const Projects = props => {
   const [projects, setProjects] = useState();
 
   useEffect(() => {
@@ -30,7 +30,11 @@ const Projects = () => {
         <div className="projects" key={project.id}>
           <h3>{project.name}</h3>
           <p>{project.description}</p>
-          <Button className="button-projects" secondary>Details</Button>
+          <Button 
+            className="button-projects"
+            secondary
+            onClick={() => props.history.push(`/projects/${project.id}`)}
+          >Details</Button>
         </div>)}
     </div>
   );

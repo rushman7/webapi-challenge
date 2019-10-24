@@ -1,15 +1,16 @@
 .App {
-  text-align: center;
   background-color: #282c34;
   height: 100vh;
   color: white;
 }
 
-.App h2 {
+.title {
+  text-align: center;
   font-size: 4rem;
 }
 
 .project-cont {
+  text-align: center;
   width: 90%;
   margin: 1rem auto 0 auto;
   display: flex;
@@ -38,4 +39,25 @@
 
 .button-projects {
   width: 130px;
+}
+
+.single-project-div {
+  border: 2px solid white;
+  width: 600px;
+  height: 500px;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.single-project-div p {
+  border-top: 1px solid white;
+  height: 125px;
+  padding-top: 5px;
+  font-size: 22px;
+  color: white;
+}
+
+.single-project-div h3 {
+  height: 35px;
 }
