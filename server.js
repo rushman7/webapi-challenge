@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const projectRouter = require('./routes/projectRouter');
+const actionRouter = require('./routes/actionRouter');
 
 require('dotenv').config();
 
@@ -25,5 +26,6 @@ server.use((err, req, rest, next) => {
 })
 
 server.use('/api/projects', projectRouter)
+server.use('/api/actions', actionRouter)
 
 server.listen(port, () => console.log(`\n*** Server Running on http://localhost:${port} ***\n`));
