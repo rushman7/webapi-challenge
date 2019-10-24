@@ -61,7 +61,7 @@ function validateProject(req, res, next) {
   const { name, description } = req.body;
 
   if (!req.body) res.status(400).json({ message: "missing project data" })
-  else if (!name || !description) res.status(400).json({ message: "missing required field: name, description, or completed" })
+  else if (!name || !description) res.status(400).json({ message: "missing required field: name or description" })
   else next();
 };
 

@@ -1,24 +1,8 @@
 const express = require('express');
 const actionDB = require('../data/helpers/actionModel');
+const projectDB = require('../data/helpers/projectModel');
 
 const router = express.Router();
-
-// router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
-//   postDB.insert(req.body)
-//     .then(post => res.status(201).json(post))
-//     .catch(() => res.status(500).json({ error: "There was an error while saving the post to the database" }))
-// });
-
-// router.get('/:id/posts', validateUserId, (req, res) => {
-//   userDB.getUserPosts(req.user.id)
-//     .then(posts => {
-//       if (posts.length > 0) res.status(200).json(posts)
-//       else res.status(404).json({ error: "The posts with the specified user ID does not exist." })
-//     })
-//     .catch(() => res.status(500).json({ error: "The posts information could not be retrieved." }))
-// });
-
-// custom middleware
 
 router.get('/', (req, res) => {
   const sortField = req.query.sortBy || 'id';
@@ -35,6 +19,32 @@ router.get('/:id', validateActionId, (req, res) => {
   res.status(200).json(req.action)
 });
 
+router.post('/', validateProjectId, validateAction, (req, res) => {
+  actionDB.insert(req.body)
+    .then(action => res.status(201).json(action))
+    .catch(() => res.status(500).json({ error: "There was an error while saving the action to the database" }))
+});
+
+router.put('/:id', validateActionId, validateAction, (req, res) => {
+  actionDB.update(req.action.id, req.body)
+    .then(action => {
+      if (action) res.status(200).json({ error: `The action with the ID ${req.action.id} has been updated.` })
+      else res.status(404).json({ error: "The action with the specified ID does not exist." })
+    })
+    .catch(() => res.status(500).json({ error: "The action information could not be modified." }))
+});
+
+router.delete('/:id', validateActionId, (req, res) => {
+  actionDB.remove(req.action.id)
+    .then(action => {
+      if (action) res.status(202).json({ error: `The action with the ID ${req.action.id} has been removed.` })
+      else res.status(404).json({ error: "The action with the specified ID does not exist." })
+    })
+    .catch(() => res.status(500).json({ error: "The action could not be removed" }))
+});
+
+
+// middleware
 
 function validateActionId(req, res, next) {
   const id = req.params.id;
@@ -49,19 +59,24 @@ function validateActionId(req, res, next) {
     .catch(() => res.status(500).json({ error: "The actions information could not be retrieved." }))
 };
 
-function validateProject(req, res, next) {
-  const { name, description } = req.body;
+function validateProjectId(req, res, next) {
+  const id = req.body.project_id;
 
-  if (!req.body) res.status(400).json({ message: "missing project data" })
-  else if (!name || !description) res.status(400).json({ message: "missing required field: name, description, or completed" })
-  else next();
+  projectDB.get(id)
+    .then(project => {
+      if (project) {
+        next();
+      } else res.status(404).json({ message: "invalid project id" })
+    })
+    .catch(() => res.status(500).json({ error: "The projects information could not be retrieved." }))
 };
 
 function validateAction(req, res, next) {
-  const { text } = req.body;
+  const {project_id, description, notes } = req.body;
 
   if (!req.body) res.status(400).json({ message: "missing action data" })
-  else if (!text) res.status(404).json({ message: "missing required text field" })
+  else if (!project_id || !description || !notes) 
+    res.status(400).json({ message: "missing required field: project_id, description, or notes" })
   else next();
 };
 
